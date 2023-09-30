@@ -3,10 +3,6 @@ function Blockchain() {
   this.pendingTransactions = [];
 }
 
-/**
- * @param nonce 자격증명에서 온 숫자 값
- * proofOfWork 메소드를 통해 적법하게 새로운 블록을 만들었다는 증거
- */
 Blockchain.prototype.createNewBlock = function (
   nonce,
   previousBlockHash,
@@ -61,6 +57,20 @@ Blockchain.prototype.hashBlock = function (
     previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData);
   const hash = sha256(dataAsString);
   return hash;
+};
+
+Blockchain.prototype.proofOfWork = function (
+  previousBlockHash,
+  currentBlockData
+) {
+  let nonce = 0;
+  let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+  // hash값이 0000으로 시작할 때까지 반복
+  while (hash.substring(0, 4) !== "0000") {
+    nonce++;
+    hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+  }
+  return nonce;
 };
 
 module.exports = Blockchain;
