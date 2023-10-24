@@ -5,9 +5,12 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const Blockchain = require("./blockchain");
+const bitcoin = new Blockchain();
+
 // 전체 블록체인의 데이터를 본다
 app.get("/blockchain", function (req, res) {
-  //   res.send("Hello Coding JavaScript");
+  res.send(bitcoin);
 });
 
 // 새로운 트랜잭션을 만든다
