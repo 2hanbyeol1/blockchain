@@ -53,10 +53,15 @@ app.get("/mine", function (req, res) {
   });
 });
 
+// 네트워크에 새 노드 등록 + 브로드캐스트
 app.post("/register-and-broadcast-node", function (req, res) {
   const newNodeUrl = req.body.newNodeUrl;
 });
 
+// 새 노드 받아들임 (등록)
+app.post("/register-node", function (req, res) {});
+
 app.listen(port, function () {
-  console.log(`Listening on port ${port}...`); // 포트가 잘 동작해야 실행됨
+  // 포트가 잘 동작해야 실행됨
+  console.log(`Listening on port ${port}...`);
 });
