@@ -61,6 +61,9 @@ app.post("/register-and-broadcast-node", function (req, res) {
 // 새 노드 받아들임 (등록)
 app.post("/register-node", function (req, res) {});
 
+// 한 번에 여러 노드 등록
+app.post("/register-nodes-bulk", function (req, res) {});
+
 app.listen(port, function () {
   // 포트가 잘 동작해야 실행됨
   console.log(`Listening on port ${port}...`);
