@@ -53,6 +53,10 @@ app.get("/mine", function (req, res) {
   });
 });
 
+app.post("/register-and-broadcast-node", function (req, res) {
+  const newNodeUrl = req.body.newNodeUrl;
+});
+
 app.listen(port, function () {
   console.log(`Listening on port ${port}...`); // 포트가 잘 동작해야 실행됨
 });
