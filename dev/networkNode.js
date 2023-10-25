@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
+const port = process.argv[2]; // script: 3001
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -52,6 +53,6 @@ app.get("/mine", function (req, res) {
   });
 });
 
-app.listen(3000, function () {
-  console.log("Listening on port 3000..."); // 포트가 잘 동작해야 실행됨
+app.listen(port, function () {
+  console.log(`Listening on port ${port}...`); // 포트가 잘 동작해야 실행됨
 });
