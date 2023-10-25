@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require("uuid");
 const port = process.argv[2]; // script: 3001
+const rp = require("request-promise");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -55,7 +56,37 @@ app.get("/mine", function (req, res) {
 
 // 네트워크에 새 노드 등록 + 브로드캐스트
 app.post("/register-and-broadcast-node", function (req, res) {
+  // 등록
   const newNodeUrl = req.body.newNodeUrl;
+  if (bitcoin.networkNodes.indexOf(newNodeUrl) == -1)
+    bitcoin.networkNodes.push(newNodeUrl);
+
+  // 브로드캐스트
+  const regNodesPromises = [];
+  bitcoin.networkNodes.forEach((networkNodeUrl) => {
+    const requestOptions = {
+      uri: networkNodeUrl + "/register-node",
+      method: "POST",
+      body: { newNodeUrl: newNodeUrl },
+      json: true,
+    };
+    regNodesPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(regNodesPromises).then((data) => {
+    const bulkRegisterOptions = {
+      uri: newNodeUrl + "/register-nodes-bulk",
+      method: "POST",
+      body: {
+        allNetworkNodes: [...bitcoin.networkNodes, bitcoin.currentNodeUrl],
+      },
+      json: true,
+    };
+
+    return rp(bulkRegisterOptions).then((data) => {
+      res.json({ note: "New Node registered with Network successfully" });
+    });
+  });
 });
 
 // 새 노드 받아들임 (등록)
