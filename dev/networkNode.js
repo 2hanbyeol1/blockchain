@@ -96,12 +96,34 @@ app.get("/mine", function (req, res) {
   });
 
   res.json({
-    note: "New block mined successfully",
+    note: "New block mined & broadcast successfully",
     block: newBlock,
   });
 });
 
-app.post("/receive-new-block", function (req, res) {});
+app.post("/receive-new-block", function (req, res) {
+  const newBlock = req.body.newBlock;
+  const lastBlock = bitcoin.getLastBlock();
+
+  // newBlock이 실제 블록인지 검사
+  const correctHash = lastBlock.hash === newBlock.previousBlockHash;
+  const correctIndex = lastBlock["index"] + 1 === newBlock["index"];
+
+  if (correctHash && correctIndex) {
+    bitcoin.chain.push(newBlock);
+    bitcoin.pendingTransactions = [];
+
+    res.json({
+      note: "New block received and accepted",
+      newBlock: newBlock,
+    });
+  } else {
+    res.json({
+      note: "New block rejected",
+      newBlock: newBlock,
+    });
+  }
+});
 
 // 네트워크에 새 노드 등록 + 브로드캐스트
 app.post("/register-and-broadcast-node", function (req, res) {
