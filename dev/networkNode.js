@@ -18,11 +18,10 @@ app.get("/blockchain", function (req, res) {
 
 // 새로운 트랜잭션을 만든다
 app.post("/transaction", function (req, res) {
-  const blockIndex = bitcoin.createNewTransaction(
-    req.body.amount,
-    req.body.sender,
-    req.body.recipient
-  );
+  const newTransaction = req.body;
+  const blockIndex =
+    bitcoin.addTransactionToPendingTransactions(newTransaction);
+
   res.json({ note: `Transaction will be added in block ${blockIndex}` });
 });
 
@@ -72,11 +71,37 @@ app.get("/mine", function (req, res) {
 
   const newBlock = bitcoin.createNewBlock(nonce, previousBlockHash, blockHash);
 
+  // 채굴 브로드캐스트
+  const requestPromises = [];
+  bitcoin.networkNodes.forEach((networkNodeUrl) => {
+    const requestOptions = {
+      uri: networkNodeUrl + "/receive-new-block",
+      method: "POST",
+      body: { newBlock: newBlock },
+      json: true,
+    };
+    requestPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(requestPromises).then((data) => {
+    // 채굴 보상 트랜잭션 생성 및 브로드캐스트
+    const requestOptions = {
+      uri: bitcoin.currentNodeUrl + "/transaction/broadcast",
+      method: "POST",
+      body: { amount: 12.5, sender: "00", recipient: nodeAddress },
+      json: true,
+    };
+
+    return rp(requestOptions);
+  });
+
   res.json({
     note: "New block mined successfully",
     block: newBlock,
   });
 });
+
+app.post("/receive-new-block", function (req, res) {});
 
 // 네트워크에 새 노드 등록 + 브로드캐스트
 app.post("/register-and-broadcast-node", function (req, res) {
