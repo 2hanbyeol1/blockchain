@@ -53,6 +53,13 @@ Blockchain.prototype.createNewTransaction = function (
   return newTransaction;
 };
 
+Blockchain.prototype.addTransactionToPendingTransactions = function (
+  transactionObj
+) {
+  this.pendingTransactions.push(transactionObj);
+  return this.getLastBlock()["index"] + 1;
+};
+
 const sha256 = require("sha256");
 Blockchain.prototype.hashBlock = function (
   previousBlockHash,
