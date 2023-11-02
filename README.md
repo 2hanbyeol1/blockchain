@@ -7,12 +7,26 @@
 ## HOW TO START
 
 ```
-npm start node_1
-npm start node_2
-npm start node_3
+$ npm run node_1
+$ npm run node_2
+$ npm run node_3
+```
+
+### test
+
+`dev/test.js` 실행
+
+```
+$ npm run test
 ```
 
 ## API
+
+### 블록체인 조회
+
+GET http://localhost:3001/blockchain
+
+---
 
 ### 네트워크에 새 노드 등록 및 브로드캐스트
 
