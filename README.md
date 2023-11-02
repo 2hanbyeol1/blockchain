@@ -59,3 +59,9 @@ POST http://localhost:3001/transaction/broadcast
   "recipient": "HIJKLMN"
 }
 ```
+
+---
+
+### Consensus
+
+GET http://localhost:3005/consensus
